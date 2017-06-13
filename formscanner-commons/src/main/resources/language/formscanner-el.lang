@@ -1,19 +1,6 @@
 # Greek Translation
 formscanner.main.title=FormScanner $VERSION
-about.text=<html><h2 align=\"center\">FormScanner - Free OMR Software</h2> 
-<h3 align=\"center\">Έκδοση $VERSION</h3> 
-<h3 align=\"center\">Το FormScanner σχεδιάστηκε και αναπτύχθηκε από:</h3><center><a href=\"http://albertoborsetta.com/\">Alberto Borsetta</a></center> 
-<h3 align=\"center\">Διασφάλιση ποιότητας και έλεγχος:</h3><center><a href=\"http://www.dies.uniud.it/battauz.html\">Michela Battauz</a><br /><a href=\"http://www.nicholls.edu/physical-sciences/faculty-staff/c-young/\">Chadwick Young</a><br /><a href=\"http://www.columbia.edu/~ns2224/\">Nicol&aacute;s E. Stier-Moses</a></center> 
-<h3 align=\"center\">Μετάφραση στα Πορτογαλικά:</h3><center>Milennia Maria Moura Phereira<br />FranChasing Phereira<br />Giuliana (Jule) Benedetti</center> 
-<h3 align=\"center\">Μετάφραση στα Ελληνικά:</h3><center><a href=\"http://www.geogeo.gr\">geogeo.gr</a></center> 
-<h3 align=\"center\">Μετάφραση στα Πολωνικά:</h3><center>Marek Lewandowski</center> 
-<h3 align=\"center\">Μετάφραση στα Πέρσης:</h3><center>Majid Gholipasandi</center> 
-<h3 align=\"center\">Μετάφραση στα ισπανικά:</h3><center>Roberto Villanueva</center> 
-<h3 align=\"center\">Μετάφραση στα Ολλανδικά:</h3><center><a href=\"https://www.vcard.wur.nl/Views/Profile/View.aspx?id=61838&ln=eng\">Maikel P.H. Verouden</a></center> 
-<h3 align=\"center\">Μετάφραση στα ιαπωνικά:</h3><center>Atsushi Yamaoka</center> 
-<h3 align=\"center\">Μετάφραση στα γαλλικά:</h3><center>Julien Monticolo<br /><a href=\"http://danythibault.profweb.ca/\">Dany Thibault</a></center> 
-<h3 align=\"center\">Μετάφραση στα γερμανική:</h3><center>Eugenia Piccini</center> 
-<h3 align=\"center\">Μετάφραση στα αραβικά:</h3><center>Khalid Alqahtani</center><p align=\"center\">Επισκεφθείτε την <a href=\"http://www.formscanner.org/\">Ιστοσελίδα του έργου</a> για περισσότερες πληροφορίες σχετικά με το προϊόν.</p><p align=\"center\">$COPYRIGHT <a href=\"http://albertoborsetta.com/\">Alberto Borsetta</a></p><br /><center><a title=\"Κάντε μια δωρεά\" href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=alberto%2eborsetta%40gmail%2ecom&amp;lc=GB&amp;item_name=FormScanner&amp;item_number=FS%2d1976&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted\" target=\"_blank\"><img class=\"aligncenter\" src=\"https://www.paypal.com/en_US/i/btn/x-click-but04.gif\" alt=\"Κάντε μια δωρεά\" /></a></center></html>
+about.text=<html><h2 align=\"center\">FormScanner - Free OMR Software</h2> <h3 align=\"center\">Έκδοση $VERSION</h3> <h3 align=\"center\">Το FormScanner σχεδιάστηκε και αναπτύχθηκε από:</h3><center><a href=\"http://albertoborsetta.com/\">Alberto Borsetta</a></center> <h3 align=\"center\">Διασφάλιση ποιότητας και έλεγχος:</h3><center><a href=\"http://www.dies.uniud.it/battauz.html\">Michela Battauz</a><br /><a href=\"http://www.nicholls.edu/physical-sciences/faculty-staff/c-young/\">Chadwick Young</a><br /><a href=\"http://www.columbia.edu/~ns2224/\">Nicol&aacute;s E. Stier-Moses</a></center> <h3 align=\"center\">Μετάφραση στα Πορτογαλικά:</h3><center>Milennia Maria Moura Phereira<br />FranChasing Phereira<br />Giuliana (Jule) Benedetti</center> <h3 align=\"center\">Μετάφραση στα Ελληνικά:</h3><center><a href=\"https://www.geogeo.gr\">geogeo.gr</a></center> <h3 align=\"center\">Μετάφραση στα Πολωνικά:</h3><center>Marek Lewandowski</center> <h3 align=\"center\">Μετάφραση στα Περσικά:</h3><center>Majid Gholipasandi</center> <h3 align=\"center\">Μετάφραση στα Ισπανικά:</h3><center>Roberto Villanueva</center> <h3 align=\"center\">Μετάφραση στα Ολλανδικά:</h3><center><a href=\"https://www.vcard.wur.nl/Views/Profile/View.aspx?id=61838&ln=eng\">Maikel P.H. Verouden</a></center> <h3 align=\"center\">Μετάφραση στα Ιαπωνικά:</h3><center>Atsushi Yamaoka</center> <h3 align=\"center\">Μετάφραση στα Γαλλικά:</h3><center>Julien Monticolo<br /><a href=\"http://danythibault.profweb.ca/\">Dany Thibault</a></center> <h3 align=\"center\">Μετάφραση στα Γερμανικά</h3><center>Eugenia Piccini</center> <h3 align=\"center\">Μετάφραση στα Αραβικά:</h3><center>Khalid Alqahtani</center><p align=\"center\">Επισκεφθείτε την <a href=\"http://www.formscanner.org/\">Ιστοσελίδα του έργου</a> για περισσότερες πληροφορίες σχετικά με το προϊόν.</p><p align=\"center\">$COPYRIGHT <a href=\"http://albertoborsetta.com/\">Alberto Borsetta</a></p><br /><center><a title=\"Κάντε μια δωρεά\" href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=alberto%2eborsetta%40gmail%2ecom&amp;lc=GB&amp;item_name=FormScanner&amp;item_number=FS%2d1976&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted\" target=\"_blank\"><img class=\"aligncenter\" src=\"https://www.paypal.com/en_US/i/btn/x-click-but04.gif\" alt=\"Κάντε μια δωρεά\" /></a></center></html>
 image.frame.title=Εικόνα
 open.images=Άνοιγμα εικόνων
 open.images.tooltip=Άνοιγμα εικόνων
@@ -32,9 +19,9 @@ create.template.tooltip=Δημιουργία πρότυπου από εικόν�
 load.template=Φόρτωση αποθηκευμένου προτύπου
 load.template.mnemonic=Φ
 load.template.tooltip=Φόρτωση αποθηκευμένου προτύπου
-edit.menu=Τροποποίηση
-edit.menu.tooltip=Μενού τροποποίησης
-edit.menu.mnemonic=Τ
+edit.menu=Επεξεργασία
+edit.menu.mnemonic=Ε
+edit.menu.tooltip=Μενού επεξεργασίας
 analyze.file.frame.title=Σάρωση αρχείων
 analyze.files=Έναρξη σάρωσης εικόνα-εικόνα
 analyze.files.tooltip=Έναρξη σάρωσης εικόνα-εικόνα
