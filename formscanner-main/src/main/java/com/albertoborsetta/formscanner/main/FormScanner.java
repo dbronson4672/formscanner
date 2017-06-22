@@ -91,12 +91,15 @@ public class FormScanner {
 				System.exit(-1);
 			}
 			String[] extensions = ImageIO.getReaderFileSuffixes();
-			Iterator<?> fileIterator = FileUtils.iterateFiles(
+			Iterator<File> fileIterator = FileUtils.iterateFiles(
 					new File(args[1]), extensions, false);
 			HashMap<String, FormTemplate> filledForms = new HashMap<>();
+			BufferedImage image = null;
+
 			while (fileIterator.hasNext()) {
 				File imageFile = (File) fileIterator.next();
-				BufferedImage image = null;
+				fileIterator.remove();
+				
 				try {
 					image = ImageIO.read(imageFile);
 				} catch (IOException e) {

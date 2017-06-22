@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -1055,7 +1056,10 @@ public class FormTemplate {
 				fieldDetectorThreads.add(future);
 			}
 
-			for (Future<HashMap<String, FormQuestion>> thread : fieldDetectorThreads) {
+			Iterator<Future<HashMap<String, FormQuestion>>> iterator = fieldDetectorThreads.iterator();
+			while (iterator.hasNext()) {
+				Future<HashMap<String, FormQuestion>> thread = iterator.next();
+				iterator.remove();
 				try {
 					HashMap<String, FormQuestion> threadFields = thread.get();
 					for (String fieldName : threadFields.keySet()) {
@@ -1066,6 +1070,7 @@ public class FormTemplate {
 					throw new FormScannerException(e.getCause());
 				}
 			}
+
 			threadPool.shutdown();
 		}
 	}
@@ -1258,7 +1263,12 @@ public class FormTemplate {
 				barcodeDetectorThreads.add(future);
 			}
 
-			for (Future<HashMap<String, FormArea>> thread : barcodeDetectorThreads) {
+			Iterator<Future<HashMap<String, FormArea>>> iterator = barcodeDetectorThreads.iterator();
+			
+			while (iterator.hasNext()) {
+				Future<HashMap<String, FormArea>> thread = iterator.next();
+				iterator.remove();
+
 				try {
 					HashMap<String, FormArea> threadFields = thread.get();
 					for (String barcodeName : threadFields.keySet()) {
@@ -1269,6 +1279,7 @@ public class FormTemplate {
 					throw new FormScannerException(e.getCause());
 				}
 			}
+
 			threadPool.shutdown();
 		}
 	}
