@@ -86,9 +86,11 @@ public class FormScanner {
 			File templateFile = new File(args[0]);
 			FormTemplate template = null;
 			DiagnosticsWriter diagnostics = null;
+			AnnotatedImageWriter overlayWriter = null;
 			try {
 				template = new FormTemplate(templateFile);
 				diagnostics = new DiagnosticsWriter(template);
+				overlayWriter = new AnnotatedImageWriter(template);
 				if (!FormScannerConstants.CURRENT_TEMPLATE_VERSION.equals(template.getVersion())) {
 					fileUtils.saveToFile(FilenameUtils.getFullPath(args[0]), template, false);
 				}
@@ -121,13 +123,16 @@ public class FormScanner {
 						filledForm.findPoints(
 								image, template.getThreshold(),
 								template.getDensity(), template.getSize());
-						filledForm.findAreas(image);
+							filledForm.findAreas(image);
 					} catch (FormScannerException e) {
 						logger.debug("Error", e);
 						System.exit(-1);
 					}
 					if (diagnostics != null) {
 						diagnostics.record(imageFile, image, filledForm);
+					}
+					if (overlayWriter != null) {
+						overlayWriter.write(imageFile, image, filledForm);
 					}
 					filledForms
 						.put(
