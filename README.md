@@ -30,3 +30,6 @@ How To Contribute
 ===
 
 [http://www.bugheaven.com/bugzilla/FormScanner](http://www.bugheaven.com/bugzilla/FormScanner)
+
+  mvn install:install-file   -Dfile=formscanner-commons/src/main/resources/lib/quaqua-8.0.jar   -DgroupId=ch.randelshofer  -DartifactId=quaqua   -Dversion=8.0   -Dpackaging=jar  
+  mvn -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip-true install
