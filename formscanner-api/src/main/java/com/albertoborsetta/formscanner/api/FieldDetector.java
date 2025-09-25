@@ -57,6 +57,7 @@ public class FieldDetector extends FormScannerDetector implements Callable<HashM
 						
 						if (templateField.rejectMultiple()) {
 							filledField.setPoint(Constants.NO_RESPONSE, Constants.EMPTY_POINT);
+							filledField.setResponseFillRatio(Constants.NO_RESPONSE, null);
 							fields.put(fieldName, filledField);
 							break;
 						}
@@ -66,6 +67,9 @@ public class FieldDetector extends FormScannerDetector implements Callable<HashM
 				}
 				
 				filledField.setPoint(pointName, responsePoint);
+				if (lastFilled >= 0) {
+					filledField.setResponseFillRatio(pointName, lastFilled);
+				}
 				fields.put(fieldName, filledField);
 			}
 		}
@@ -73,6 +77,7 @@ public class FieldDetector extends FormScannerDetector implements Callable<HashM
 		if (!found) {
 			FormQuestion filledField = getField(fieldName);
 			filledField.setPoint(Constants.NO_RESPONSE, Constants.EMPTY_POINT);
+			filledField.setResponseFillRatio(Constants.NO_RESPONSE, null);
 			fields.put(fieldName, filledField);
 		}
 

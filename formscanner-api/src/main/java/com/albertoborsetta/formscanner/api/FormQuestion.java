@@ -32,6 +32,7 @@ public class FormQuestion extends FormField {
 	private boolean multiple;
 	private final HashMap<String, FormPoint> points;
 	private boolean rejectMultiple = false;
+	private final HashMap<String, Double> responseFillRatios;
 
 	/**
 	 * Instantiates a new FormQuestion with the responses points.
@@ -46,6 +47,7 @@ public class FormQuestion extends FormField {
 	public FormQuestion(String name, HashMap<String, FormPoint> points) {
 		super(name);
 		this.points = points;
+		responseFillRatios = new HashMap<>();
 	}
 
 	/**
@@ -60,6 +62,7 @@ public class FormQuestion extends FormField {
 	public FormQuestion(String name) {
 		super(name);
 		points = new HashMap<>();
+		responseFillRatios = new HashMap<>();
 	}
 
 	/**
@@ -74,6 +77,9 @@ public class FormQuestion extends FormField {
 	 */
 	public void setPoint(String value, FormPoint point) {
 		points.put(value, point);
+		if (point == null) {
+			responseFillRatios.remove(value);
+		}
 	}
 
 	/**
@@ -95,6 +101,7 @@ public class FormQuestion extends FormField {
 	 */
 	public void clearPoints() {
 		points.clear();
+		responseFillRatios.clear();
 	}
 
 	/**
@@ -106,6 +113,39 @@ public class FormQuestion extends FormField {
 	 */
 	public HashMap<String, FormPoint> getPoints() {
 		return points;
+	}
+
+	/**
+	 * Stores the computed fill ratio for a response.
+	 *
+	 * @param value the response value
+	 * @param ratio the fill ratio (null to clear)
+	 */
+	public void setResponseFillRatio(String value, Double ratio) {
+		if (ratio == null) {
+			responseFillRatios.remove(value);
+		} else {
+			responseFillRatios.put(value, ratio);
+		}
+	}
+
+	/**
+	 * Returns the fill ratio for a response.
+	 *
+	 * @param value the response value
+	 * @return the fill ratio or {@code null}
+	 */
+	public Double getResponseFillRatio(String value) {
+		return responseFillRatios.get(value);
+	}
+
+	/**
+	 * Returns all stored response fill ratios.
+	 *
+	 * @return the map of response fill ratios
+	 */
+	public HashMap<String, Double> getResponseFillRatios() {
+		return responseFillRatios;
 	}
 
 	/**

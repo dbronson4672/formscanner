@@ -221,11 +221,15 @@ class DiagnosticsWriter {
             buffer.append(INDENT4).append("detectedResponses:").append(NEW_LINE);
             for (String response : responses) {
                 FormPoint point = detectedQuestion.getPoint(response);
+                Double fillRatio = detectedQuestion.getResponseFillRatio(response);
                 buffer.append(INDENT4)
                       .append(INDENT)
                       .append(labelForResponse(response))
                       .append(" -> ")
                       .append(formatPoint(point))
+                      .append(" (fill=")
+                      .append(fillRatio != null ? formatDouble(fillRatio) : "n/a")
+                      .append(')')
                       .append(NEW_LINE);
             }
         }
