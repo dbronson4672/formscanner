@@ -53,6 +53,8 @@ class AnnotatedImageWriter {
             int markerSize = determineMarkerSize();
             ShapeType shape = template.getShape();
 
+            drawDetectedCorners(g, filledForm);
+
             Map<String, FormGroup> groups = filledForm.getGroups();
             if (groups != null && !groups.isEmpty()) {
                 List<String> groupNames = new ArrayList<>(groups.keySet());
@@ -88,6 +90,30 @@ class AnnotatedImageWriter {
         } catch (IOException e) {
             logger.debug("Error", e);
         }
+    }
+
+    private void drawDetectedCorners(Graphics2D g, FormTemplate filledForm) {
+        Map<com.albertoborsetta.formscanner.api.commons.Constants.Corners, FormPoint> corners = filledForm.getCorners();
+        if (corners == null || corners.isEmpty()) {
+            return;
+        }
+
+        Color previous = g.getColor();
+        g.setColor(new Color(0, 180, 0));
+        g.setStroke(new BasicStroke(3f));
+
+        com.albertoborsetta.formscanner.api.commons.Constants.Corners[] values = com.albertoborsetta.formscanner.api.commons.Constants.Corners.values();
+        for (int i = 0; i < values.length; i++) {
+            FormPoint start = corners.get(values[i]);
+            FormPoint end = corners.get(values[(i + 1) % values.length]);
+            if (start == null || end == null) {
+                continue;
+            }
+            g.drawLine((int) Math.round(start.getX()), (int) Math.round(start.getY()),
+                    (int) Math.round(end.getX()), (int) Math.round(end.getY()));
+        }
+
+        g.setColor(previous);
     }
 
     private void drawResponses(Graphics2D g, FormQuestion question, int markerSize, ShapeType shape) {
