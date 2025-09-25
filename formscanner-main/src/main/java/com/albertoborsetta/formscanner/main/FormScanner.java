@@ -84,13 +84,19 @@ public class FormScanner {
 			FormFileUtils fileUtils = FormFileUtils.getInstance(locale);
 			
 			File templateFile = new File(args[0]);
+			File diagnosticsOutputDir = null;
+			if (args.length > 2 && args[2] != null && !args[2].trim().isEmpty()) {
+				diagnosticsOutputDir = new File(args[2]);
+			}
 			FormTemplate template = null;
 			DiagnosticsWriter diagnostics = null;
 			AnnotatedImageWriter overlayWriter = null;
 			try {
 				template = new FormTemplate(templateFile);
 				diagnostics = new DiagnosticsWriter(template);
-				overlayWriter = new AnnotatedImageWriter(template);
+				if (diagnosticsOutputDir != null) {
+					overlayWriter = new AnnotatedImageWriter(template, diagnosticsOutputDir);
+				}
 				if (!FormScannerConstants.CURRENT_TEMPLATE_VERSION.equals(template.getVersion())) {
 					fileUtils.saveToFile(FilenameUtils.getFullPath(args[0]), template, false);
 				}

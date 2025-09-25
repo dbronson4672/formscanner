@@ -7,6 +7,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,13 +35,15 @@ class AnnotatedImageWriter {
     private static final Logger logger = LogManager.getLogger(AnnotatedImageWriter.class);
 
     private final FormTemplate template;
+    private final File targetDirectory;
 
-    AnnotatedImageWriter(FormTemplate template) {
+    AnnotatedImageWriter(FormTemplate template, File targetDirectory) {
         this.template = template;
+        this.targetDirectory = targetDirectory;
     }
 
     void write(File imageFile, BufferedImage sourceImage, FormTemplate filledForm) {
-        if (imageFile == null || sourceImage == null || filledForm == null) {
+        if (imageFile == null || sourceImage == null || filledForm == null || targetDirectory == null) {
             return;
         }
 
@@ -85,6 +88,7 @@ class AnnotatedImageWriter {
 
         File target = deriveTarget(imageFile);
         try {
+            Files.createDirectories(targetDirectory.toPath());
             String format = determineFormat(target);
             ImageIO.write(annotated, format, target);
         } catch (IOException e) {
@@ -173,16 +177,7 @@ class AnnotatedImageWriter {
     }
 
     private File deriveTarget(File imageFile) {
-        String name = imageFile.getName();
-        String extension = FilenameUtils.getExtension(name);
-        String base = FilenameUtils.removeExtension(name);
-        String diagName;
-        if (extension.isEmpty()) {
-            diagName = base + ".diag";
-        } else {
-            diagName = base + ".diag." + extension;
-        }
-        return new File(imageFile.getParentFile(), diagName);
+        return new File(targetDirectory, imageFile.getName());
     }
 
     private String determineFormat(File target) {
