@@ -97,7 +97,8 @@ class AnnotatedImageWriter {
         }
 
         g.setStroke(new BasicStroke(2f));
-        g.setColor(new Color(255, 0, 0, 180));
+        Color fillColor = new Color(255, 0, 0, 200);
+        Color borderColor = new Color(255, 0, 0);
 
         for (FormPoint point : responses.values()) {
             if (point == null || point == Constants.EMPTY_POINT) {
@@ -109,8 +110,14 @@ class AnnotatedImageWriter {
             int y = (int) Math.round(point.getY());
 
             if (shape == ShapeType.SQUARE) {
+                g.setColor(fillColor);
+                g.fillRect(x - radius, y - radius, diameter, diameter);
+                g.setColor(borderColor);
                 g.drawRect(x - radius, y - radius, diameter, diameter);
             } else {
+                g.setColor(fillColor);
+                g.fillOval(x - radius, y - radius, diameter, diameter);
+                g.setColor(borderColor);
                 g.drawOval(x - radius, y - radius, diameter, diameter);
             }
         }
