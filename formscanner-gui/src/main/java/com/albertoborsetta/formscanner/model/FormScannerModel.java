@@ -55,7 +55,8 @@ import java.awt.HeadlessException;
 import java.awt.Image;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -129,12 +130,20 @@ public class FormScannerModel {
 	private int nextGroupIndex=1;
 
 	public FormScannerModel() throws UnsupportedEncodingException {
-		String path = FormScannerModel.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-		String installPath = URLDecoder.decode(path, "UTF-8");
-		installPath = StringUtils.substringBeforeLast(installPath, "lib");
-		installPath = StringUtils.defaultIfBlank(System.getProperty("FormScanner_HOME"), installPath);
+		URL codeSourceUrl = FormScannerModel.class.getProtectionDomain().getCodeSource().getLocation();
+		String installPath = resolveInstallPath(codeSourceUrl);
+		String normalizedInstallPath = StringUtils.isNotBlank(installPath)
+				? FilenameUtils.normalizeNoEndSeparator(installPath) : null;
 		
-		System.setProperty("log4j.configurationFile", "file:\\" + installPath + "/config/log4j.xml");
+		if (StringUtils.isBlank(System.getProperty("log4j.configurationFile"))) {
+			URL logConfiguration = FormScannerModel.class.getClassLoader().getResource("config/log4j.xml");
+			if (logConfiguration != null) {
+				System.setProperty("log4j.configurationFile", logConfiguration.toString());
+			} else if (StringUtils.isNotBlank(normalizedInstallPath)) {
+				System.setProperty("log4j.configurationFile",
+						"file:" + normalizedInstallPath + File.separator + "config" + File.separator + "log4j.xml");
+			}
+		}
 		logger = LogManager.getLogger(FormScannerModel.class.getName());
 
 		String installationLanguage = StringUtils.defaultIfBlank(System.getProperty("FormScanner_LANGUAGE"),
@@ -154,7 +163,7 @@ public class FormScannerModel {
 
 		propertiesPath = propertiesPath + "/properties/";
 
-		configurations = FormScannerConfiguration.getConfiguration(propertiesPath, installPath + "/");
+		configurations = FormScannerConfiguration.getConfiguration(propertiesPath, normalizedInstallPath);
 
 		templatePath = configurations.getProperty(FormScannerConfigurationKeys.TEMPLATE_SAVE_PATH,
 				templatePath + "/FormScanner/templates/");
@@ -173,8 +182,8 @@ public class FormScannerModel {
 
 		orientation = ComponentOrientation.getOrientation(locale);
 
-		FormScannerTranslation.setTranslation(installPath, lang);
-		FormScannerResources.setResources(installPath);
+		FormScannerTranslation.setTranslation(normalizedInstallPath, lang);
+		FormScannerResources.setResources(normalizedInstallPath);
 
 		threshold = (Integer) configurations.getProperty(FormScannerConfigurationKeys.THRESHOLD,
 				FormScannerConfigurationKeys.DEFAULT_THRESHOLD);
@@ -1140,5 +1149,32 @@ public class FormScannerModel {
 		default:
 			break;
 		}
+	}
+
+	private String resolveInstallPath(URL location) {
+		String configuredHome = System.getProperty("FormScanner_HOME");
+		if (StringUtils.isNotBlank(configuredHome)) {
+			return new File(configuredHome).getAbsolutePath();
+		}
+		if (location == null) {
+			return null;
+		}
+		try {
+			File codeSource = new File(location.toURI());
+			if (codeSource.isFile() || StringUtils.endsWithIgnoreCase(codeSource.getName(), ".jar")) {
+				File parent = codeSource.getParentFile();
+				if (parent != null && "lib".equalsIgnoreCase(parent.getName())) {
+					File grandParent = parent.getParentFile();
+					return grandParent != null ? grandParent.getAbsolutePath() : parent.getAbsolutePath();
+				}
+				return parent != null ? parent.getAbsolutePath() : codeSource.getAbsolutePath();
+			}
+			if (codeSource.isDirectory()) {
+				return codeSource.getAbsolutePath();
+			}
+		} catch (URISyntaxException e) {
+			return null;
+		}
+		return null;
 	}
 }
