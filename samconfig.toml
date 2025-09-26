@@ -1,0 +1,10 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "Form-Scanner"
+resolve_s3 = true
+s3_prefix = "Form-Scanner"
+region = "ca-central-1"
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+image_repositories = []
