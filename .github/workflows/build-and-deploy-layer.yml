@@ -42,13 +42,13 @@ jobs:
         run: |
           set -euo pipefail
           rm -rf layer
-          JAR_PATH=$(find formscanner-main/target -maxdepth 1 -type f -name 'formscanner-main-*-all.jar' -print -quit)
-          if [ -z "$JAR_PATH" ]; then
+          JAR_PATH=formscanner-main/target/formscanner.jar
+          if [ ! -f "$JAR_PATH" ]; then
             echo "Shaded jar not found"
             exit 1
           fi
           mkdir -p layer/java/lib
-          cp "$JAR_PATH" layer/java/lib/formscanner-main-all.jar
+          cp "$JAR_PATH" layer/java/lib/formscanner.jar
 
       - name: Package Lambda layer
         run: zip -r formscanner-layer.zip layer
@@ -64,46 +64,80 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    if: ${{ secrets.AWS_ACCESS_KEY_ID != '' && secrets.AWS_SECRET_ACCESS_KEY != '' && secrets.AWS_REGION != '' && secrets.SAM_ARTIFACT_BUCKET != '' && secrets.SAM_STACK_NAME != '' }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      SAM_ARTIFACT_BUCKET: ${{ secrets.SAM_ARTIFACT_BUCKET }}
+      SAM_STACK_NAME: ${{ secrets.SAM_STACK_NAME }}
     steps:
+      - name: Decide whether to deploy
+        id: deploy-check
+        run: |
+          set -euo pipefail
+          missing=0
+          for name in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION SAM_ARTIFACT_BUCKET SAM_STACK_NAME; do
+            if [ -z "${!name:-}" ]; then
+              echo "::notice::Skipping deploy because $name is not set"
+              missing=1
+            fi
+          done
+          if [ "$missing" -eq 0 ]; then
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Check out repository
+        if: steps.deploy-check.outputs.should_deploy == 'true'
         uses: actions/checkout@v4
 
       - name: Download layer artifact
+        if: steps.deploy-check.outputs.should_deploy == 'true'
         uses: actions/download-artifact@v4
         with:
           name: formscanner-layer
           path: artifacts
 
       - name: Unpack layer content
+        if: steps.deploy-check.outputs.should_deploy == 'true'
         run: |
           set -euo pipefail
           rm -rf layer
           unzip artifacts/formscanner-layer.zip
 
       - name: Set up Temurin JDK
+        if: steps.deploy-check.outputs.should_deploy == 'true'
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
 
       - name: Set up AWS SAM CLI
+        if: steps.deploy-check.outputs.should_deploy == 'true'
         uses: aws-actions/setup-sam@v2
 
       - name: Configure AWS credentials
+        if: steps.deploy-check.outputs.should_deploy == 'true'
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Build SAM application
+        if: steps.deploy-check.outputs.should_deploy == 'true'
         run: sam build --template-file template.yaml
 
       - name: Deploy Lambda layer
+        if: steps.deploy-check.outputs.should_deploy == 'true'
         run: |
           sam deploy --template-file .aws-sam/build/template.yaml \
-            --stack-name ${{ secrets.SAM_STACK_NAME }} \
-            --s3-bucket ${{ secrets.SAM_ARTIFACT_BUCKET }} \
+            --stack-name ${{ env.SAM_STACK_NAME }} \
+            --s3-bucket ${{ env.SAM_ARTIFACT_BUCKET }} \
             --no-confirm-changeset \
             --no-fail-on-empty-changeset
+
+      - name: Log skipped deploy
+        if: steps.deploy-check.outputs.should_deploy != 'true'
+        run: echo "Deployment skipped because required secrets are not configured."

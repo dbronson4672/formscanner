@@ -29,7 +29,7 @@ mvn --batch-mode -pl formscanner-distribution -am \
 
 echo "Build complete. Distribution artifacts are under formscanner-distribution/target"
 
-SHADED_JAR=$(find "${SCRIPT_DIR}/formscanner-main/target" -maxdepth 1 -type f -name 'formscanner-main-*-all.jar' -print -quit)
-if [[ -n "${SHADED_JAR}" ]]; then
+SHADED_JAR="${SCRIPT_DIR}/formscanner-main/target/formscanner.jar"
+if [[ -f "${SHADED_JAR}" ]]; then
   echo "Standalone jar available at ${SHADED_JAR}"
 fi
