@@ -15,6 +15,7 @@ Resources:
         - java17
         - python3.13
         - provided.al2
+        - provided.al2023
       LicenseInfo: MIT
 
   FormScannerLayerArnParameter:
