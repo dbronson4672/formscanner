@@ -1,13 +1,13 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Publish the FormScanner shaded jar as an AWS Lambda layer and expose its ARN via SSM.
+Description: Publish the FormScanner jar as an AWS Lambda layer and expose its ARN via SSM.
 
 Resources:
   FormScannerLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName: formscanner-layer
-      Description: FormScanner shaded jar packaged for Lambda runtime use.
+      Description: FormScanner shaded jar packaged for Lambda runtime use
       ContentUri: layer/
       CompatibleRuntimes:
         - java8.al2
@@ -21,7 +21,7 @@ Resources:
   FormScannerLayerArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: /formscanner/layer/arn
+      Name: /layers/shared/formscanner/arn
       Type: String
       Value: !Ref FormScannerLayer
       Description: ARN for the published FormScanner Lambda layer.
