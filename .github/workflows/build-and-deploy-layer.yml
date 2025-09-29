@@ -24,12 +24,14 @@ jobs:
           cache: maven
 
       - name: Install Quaqua dependency
-        run: mvn --batch-mode install:install-file \
-          -Dfile=formscanner-commons/src/main/resources/lib/quaqua-8.0.jar \
-          -DgroupId=ch.randelshofer \
-          -DartifactId=quaqua \
-          -Dversion=8.0 \
-          -Dpackaging=jar
+        run: |
+          set -euo pipefail
+          mvn --batch-mode org.apache.maven.plugins:maven-install-plugin:3.1.2:install-file \
+            -Dfile="${{ github.workspace }}/formscanner-commons/src/main/resources/lib/quaqua-8.0.jar" \
+            -DgroupId=ch.randelshofer \
+            -DartifactId=quaqua \
+            -Dversion=8.0 \
+            -Dpackaging=jar
 
       - name: Build shaded jar
         run: mvn --batch-mode -pl formscanner-distribution -am \
