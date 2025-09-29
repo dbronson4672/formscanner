@@ -129,6 +129,24 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Ensure stack can be updated
+        if: steps.deploy-check.outputs.should_deploy == 'true'
+        env:
+          SAM_STACK_NAME: ${{ secrets.SAM_STACK_NAME }}
+        run: |
+          set -euo pipefail
+          stack_status=$(aws cloudformation describe-stacks --stack-name "$SAM_STACK_NAME" --query 'Stacks[0].StackStatus' --output text 2>/dev/null || echo 'STACK_DOES_NOT_EXIST')
+          if [ "$stack_status" = "ROLLBACK_COMPLETE" ]; then
+            echo "::warning::Existing stack $SAM_STACK_NAME is stuck in ROLLBACK_COMPLETE. Deleting before redeploy."
+            aws cloudformation delete-stack --stack-name "$SAM_STACK_NAME"
+            aws cloudformation wait stack-delete-complete --stack-name "$SAM_STACK_NAME"
+          elif [ "$stack_status" = "DELETE_FAILED" ]; then
+            echo "::error::Stack $SAM_STACK_NAME is in DELETE_FAILED. Manual intervention required before redeploy."
+            exit 1
+          else
+            echo "Stack status for $SAM_STACK_NAME is $stack_status. Proceeding with deploy."
+          fi
+
       - name: Build SAM application
         if: steps.deploy-check.outputs.should_deploy == 'true'
         run: sam build --template-file template.yaml
