@@ -31,7 +31,7 @@ Outputs:
     Value: !Ref FormScannerLayer
   LayerVersionNumber:
     Description: Version number for the published layer.
-    Value: !GetAtt FormScannerLayer.Version
+    Value: !Select [7, !Split [":", !Ref FormScannerLayer]]
   LayerArnParameterName:
     Description: SSM parameter storing the layer ARN.
     Value: !Ref FormScannerLayerArnParameter
