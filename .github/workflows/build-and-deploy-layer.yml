@@ -34,11 +34,13 @@ jobs:
             -Dpackaging=jar
 
       - name: Build shaded jar
-        run: mvn --batch-mode -pl formscanner-distribution -am \
-          -DskipTests \
-          -Dmaven.javadoc.skip=true \
-          -Dgpg.skip=true \
-          clean package
+        run: |
+          set -euo pipefail
+          mvn --batch-mode -pl formscanner-distribution -am \
+            -DskipTests \
+            -Dmaven.javadoc.skip=true \
+            -Dgpg.skip=true \
+            clean package
 
       - name: Prepare Lambda layer content
         run: |
