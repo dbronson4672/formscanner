@@ -143,7 +143,6 @@ jobs:
           sam deploy --template-file .aws-sam/build/template.yaml \
             --stack-name "$SAM_STACK_NAME" \
             --s3-bucket "$SAM_ARTIFACT_BUCKET" \
-            --no-config-file \
             --no-confirm-changeset \
             --no-fail-on-empty-changeset
 
