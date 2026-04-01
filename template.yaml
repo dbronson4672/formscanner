@@ -5,10 +5,12 @@ Description: Publish the FormScanner jar as an AWS Lambda layer and expose its A
 Resources:
   FormScannerLayer:
     Type: AWS::Serverless::LayerVersion
+    Metadata:
+      BuildMethod: makefile
     Properties:
       LayerName: formscanner-layer
       Description: FormScanner shaded jar packaged for Lambda runtime use
-      ContentUri: layer/
+      ContentUri: .
       CompatibleRuntimes:
         - java8.al2
         - java11
