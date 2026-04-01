@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xs:simpleType name="cornerPosition">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TOP_LEFT"/>
+      <xs:enumeration value="TOP_RIGHT"/>
+      <xs:enumeration value="BOTTOM_LEFT"/>
+      <xs:enumeration value="BOTTOM_RIGHT"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="cornerType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ANGULAR"/>
+      <xs:enumeration value="ROUND"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="shapeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="SQUARE"/>
+      <xs:enumeration value="CIRCLE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="fieldType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="QUESTIONS_BY_ROWS"/>
+      <xs:enumeration value="QUESTIONS_BY_COLS"/>
+      <xs:enumeration value="RESPONSES_BY_GRID"/>
+      <xs:enumeration value="BARCODE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="pointType">
+    <xs:attribute name="x" type="xs:decimal" use="required"/>
+    <xs:attribute name="y" type="xs:decimal" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="cornerElementType">
+    <xs:sequence>
+      <xs:element name="point" type="pointType"/>
+    </xs:sequence>
+    <xs:attribute name="position" type="cornerPosition" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="cornersBlockType">
+    <xs:sequence>
+      <xs:element name="corner" type="cornerElementType" minOccurs="4" maxOccurs="4"/>
+    </xs:sequence>
+    <xs:attribute name="type" type="cornerType" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="valueType">
+    <xs:sequence>
+      <xs:element name="point" type="pointType"/>
+    </xs:sequence>
+    <xs:attribute name="response" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="valuesType">
+    <xs:sequence>
+      <xs:element name="value" type="valueType" minOccurs="1" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="questionType">
+    <xs:sequence>
+      <xs:element name="values" type="valuesType"/>
+    </xs:sequence>
+    <xs:attribute name="type" type="fieldType" use="required"/>
+    <xs:attribute name="question" type="xs:string" use="required"/>
+    <xs:attribute name="multiple" type="xs:boolean" use="required"/>
+    <xs:attribute name="rejectMultiple" type="xs:boolean" use="required"/>
+    <xs:attribute name="orientation" type="fieldType" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="areaType">
+    <xs:sequence>
+      <xs:element name="corners" type="cornersBlockType"/>
+    </xs:sequence>
+    <xs:attribute name="type" type="fieldType" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="groupContent">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="question" type="questionType"/>
+      <xs:element name="area" type="areaType"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="groupType">
+    <xs:complexContent>
+      <xs:extension base="groupContent">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="fieldsType">
+    <xs:sequence>
+      <xs:element name="group" type="groupType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="groups" type="xs:boolean" use="required"/>
+    <xs:attribute name="size" type="xs:nonNegativeInteger" use="optional"/>
+    <xs:attribute name="shape" type="shapeType" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="cropType">
+    <xs:attribute name="top" type="xs:nonNegativeInteger" use="required"/>
+    <xs:attribute name="left" type="xs:nonNegativeInteger" use="required"/>
+    <xs:attribute name="right" type="xs:nonNegativeInteger" use="required"/>
+    <xs:attribute name="bottom" type="xs:nonNegativeInteger" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="rotationType">
+    <xs:attribute name="angle" type="xs:decimal" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="templateType">
+    <xs:sequence>
+      <xs:element name="crop" type="cropType"/>
+      <xs:element name="rotation" type="rotationType"/>
+      <xs:element name="corners" type="cornersBlockType"/>
+      <xs:element name="fields" type="fieldsType"/>
+    </xs:sequence>
+    <xs:attribute name="version" type="xs:string" use="required"/>
+    <xs:attribute name="threshold" type="xs:int" use="optional"/>
+    <xs:attribute name="density" type="xs:int" use="optional"/>
+  </xs:complexType>
+
+  <xs:element name="template" type="templateType"/>
+
+</xs:schema>

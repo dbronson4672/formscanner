@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -76,13 +77,26 @@ public class FormScanner {
 				}
 			});
 		} else {
+			configureLogging();
+			logger = LogManager.getLogger(FormScanner.class.getName());
+
 			Locale locale = Locale.getDefault();
 			FormFileUtils fileUtils = FormFileUtils.getInstance(locale);
 			
 			File templateFile = new File(args[0]);
+			File diagnosticsOutputDir = null;
+			if (args.length > 2 && args[2] != null && !args[2].trim().isEmpty()) {
+				diagnosticsOutputDir = new File(args[2]);
+			}
 			FormTemplate template = null;
+			DiagnosticsWriter diagnostics = null;
+			AnnotatedImageWriter overlayWriter = null;
 			try {
 				template = new FormTemplate(templateFile);
+				diagnostics = new DiagnosticsWriter(template);
+				if (diagnosticsOutputDir != null) {
+					overlayWriter = new AnnotatedImageWriter(template, diagnosticsOutputDir);
+				}
 				if (!FormScannerConstants.CURRENT_TEMPLATE_VERSION.equals(template.getVersion())) {
 					fileUtils.saveToFile(FilenameUtils.getFullPath(args[0]), template, false);
 				}
@@ -91,12 +105,15 @@ public class FormScanner {
 				System.exit(-1);
 			}
 			String[] extensions = ImageIO.getReaderFileSuffixes();
-			Iterator<?> fileIterator = FileUtils.iterateFiles(
+			Iterator<File> fileIterator = FileUtils.iterateFiles(
 					new File(args[1]), extensions, false);
 			HashMap<String, FormTemplate> filledForms = new HashMap<>();
+			BufferedImage image = null;
+
 			while (fileIterator.hasNext()) {
 				File imageFile = (File) fileIterator.next();
-				BufferedImage image = null;
+				fileIterator.remove();
+				
 				try {
 					image = ImageIO.read(imageFile);
 				} catch (IOException e) {
@@ -109,27 +126,54 @@ public class FormScanner {
 					filledForm.findCorners(
 							image, template.getThreshold(),
 							template.getDensity(), template.getCornerType(), template.getCrop());
-					filledForm.findPoints(
-							image, template.getThreshold(),
-							template.getDensity(), template.getSize());
-					filledForm.findAreas(image);
-				} catch (FormScannerException e) {
-					logger.debug("Error", e);
-					System.exit(-1);
-				}
-				filledForms
+						filledForm.findPoints(
+								image, template.getThreshold(),
+								template.getDensity(), template.getSize());
+							filledForm.findAreas(image);
+					} catch (FormScannerException e) {
+						logger.debug("Error", e);
+						System.exit(-1);
+					}
+					if (diagnostics != null) {
+						diagnostics.record(imageFile, image, filledForm);
+					}
+					if (overlayWriter != null) {
+						overlayWriter.write(imageFile, image, filledForm);
+					}
+					filledForms
 						.put(
 								FilenameUtils.getName(imageFile.toString()),
 								filledForm);
-			}
+				}
 
 			Date today = Calendar.getInstance().getTime();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+			String timestamp = sdf.format(today);
+			String separator = System.getProperty("file.separator");
 			File outputFile = new File(
-					args[1] + System.getProperty("file.separator") + "results_" + sdf
-							.format(today) + ".csv");
+					args[1] + separator + "results_" + timestamp + ".csv");
 			fileUtils.saveCsvAs(outputFile, filledForms, false);
+
+			if (diagnostics != null) {
+				File diagnosticsFile = new File(
+						args[1] + separator + "results_" + timestamp + "_diagnostics.txt");
+				try {
+					diagnostics.write(diagnosticsFile);
+				} catch (IOException e) {
+					logger.debug("Error", e);
+				}
+			}
 			System.exit(0);
+		}
+	}
+
+	private static void configureLogging() {
+		if (System.getProperty("log4j.configurationFile") != null) {
+			return;
+		}
+		URL configUrl = FormScanner.class.getClassLoader().getResource("config/log4j.xml");
+		if (configUrl != null) {
+			System.setProperty("log4j.configurationFile", configUrl.toString());
 		}
 	}
 }

@@ -7,6 +7,7 @@
     <name>FormScanner-1.1.4</name>
     <version>1.1.4</version>
     <modules>
+        <module>formscanner-api</module>
         <module>formscanner-main</module>
         <module>formscanner-distribution</module>
         <module>formscanner-commons</module>
@@ -37,8 +38,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
         </plugins>
@@ -47,5 +49,7 @@
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
         <maven-resources-plugin.version>2.6</maven-resources-plugin.version>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <gpg.skip>true</gpg.skip>
     </properties>
 </project>
